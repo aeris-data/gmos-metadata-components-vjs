@@ -1,6 +1,6 @@
 {
-  "name": "gmos-metadata-component-vjs",
-  "description": "Gmos metadata component.",
+  "name": "gmos-metadata-components-vjs",
+  "description": "Gmos metadata components.",
   "version": "0.1.0",
   "author": "Aeris",
   "private": false,
