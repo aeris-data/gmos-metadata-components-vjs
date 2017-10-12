@@ -3,12 +3,10 @@
 <div class="metadata-container">
 <div class="column">
   <aeris-metadata-description></aeris-metadata-description>
-  <aeris-metadata-contacts></aeris-metadata-contacts>
   <aeris-metadata-spatial-extents></aeris-metadata-spatial-extents>
   <aeris-metadata-temporal-extents></aeris-metadata-temporal-extents>
-  <aeris-metadata-information-links></aeris-metadata-information-links>
-  <aeris-metadata-data-access></aeris-metadata-data-access>
-  <aeris-metadata-informations></aeris-metadata-informations>
+  <aeris-metadata-contacts></aeris-metadata-contacts>
+ 
 </div>
 <div class="column">
   <gmos-download></gmos-download>
@@ -16,7 +14,8 @@
   <aeris-metadata-formats></aeris-metadata-formats>
   <aeris-metadata-parameters></aeris-metadata-parameters>
   <aeris-metadata-publications></aeris-metadata-publications>
-  <aeris-metadata-quicklooks-gallery></aeris-metadata-quicklooks-gallery>
+  <aeris-metadata-quicklook-gallery></aeris-metadata-quicklook-gallery>
+  <aeris-metadata-information></aeris-metadata-information>
 </div>
 </div>
 </span>
@@ -38,6 +37,8 @@ export default {
   },
 
   mounted: function() {
+	  
+	  
   },
   
   computed: {

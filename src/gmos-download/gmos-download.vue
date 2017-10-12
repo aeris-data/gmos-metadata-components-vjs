@@ -2,17 +2,21 @@
 {
   "en": {
   	"download": "Download",
-  	"explicationText": "To download the data files, add them to the cart by clicking here."
+  	"explicationText": "To download the data files, add them to the cart by clicking here.",
+  	"year": "year",
+  	"loading": "Loading..."
   },
   "fr": {
-  	"download": "Téléchargement",
-  	"explicationText": "Pour télécharger les fichiers de données, ajoutez-les au panier en cliquant ici."
+  	"download": "TÃ©lÃ©chargement",
+  	"explicationText": "Pour tÃ©lÃ©charger les fichiers de donnï¿½es, ajoutez-les au panier en cliquant ici.",
+  	"year": "ann.",
+  	"loading": "Chargement..."
   }
 }
 </i18n>
 
 <template>
-<span class="gmos-download-host" v-if="visible">
+<span class="gmos-download-host" >
  <div class="component-container">
       <header>
         <h3><i class="fa fa-download"></i>{{$t('download')}}</h3>
@@ -20,7 +24,18 @@
       </header>
       
       <main>   
+      	
       	  <span class="explication">{{$t('explicationText')}}</span>
+      	<div v-if="loading" class="loadingbar">
+  			<i class="fa fa-circle-o-notch fa-spin fa-fw"></i>
+  			<span>{{$t("loading")}}</span>
+  			</div>
+      	  <div class="year-container" v-show="years">
+      	  	<div class="aeris-year" v-for='(item, index) in years' :key="item.year" @click="toggleYear(item)" :class="isSelected(item, years)">
+      	  		<div class="year-label">{{$t('year')}}</div>
+      	  		<div class="year-value">{{item.year}}</div>
+      		</div>
+      	  </div>
       </main>
     </div>
 </span>
@@ -49,6 +64,10 @@ export default {
 	destroyed: function() {
 		document.removeEventListener('aerisMetadataRefreshed', this.aerisMetadataListener);
 		this.aerisMetadataListener = null;
+		
+		document.removeEventListener('cartContentResponse', this.cartContentResponseListener);
+		this.cartContentResponseListener = null;
+		
 		document.removeEventListener('aerisTheme', this.aerisThemeListener);
 		this.aerisThemeListener = null;
 	},
@@ -56,20 +75,15 @@ export default {
 	created: function () {
 		console.log("Eurochamp download - Creating");
 		this.$i18n.locale = this.lang;
-		// for rest services
-		this.service = document.querySelector('aeris-catalog').attributes.getNamedItem('download-service').value;
 		// to get the datas
 	    this.aerisMetadataListener = this.handleRefresh.bind(this);
 	    document.addEventListener('aerisMetadataRefreshed', this.aerisMetadataListener);
 	    // to apply theme
 	    this.aerisThemeListener = this.handleTheme.bind(this);
 	    document.addEventListener('aerisTheme', this.aerisThemeListener);
-	    // to get the cart response, asking if the collection is already in the cart
-	    this.cartResponseListener = this.drawSelected.bind(this);
-        document.addEventListener('cartResponse', this.cartResponseListener);
-	    // if the cart is modified directly, it fires an event to warn it was modified
-	    this.cartChangeListener = this.refresh.bind(this);
-        document.addEventListener('callCartRefreshNow', this.cartChangeListener);
+        
+        this.cartContentResponseListener = this.cartContentResponse.bind(this);
+        document.addEventListener('cartContentResponse', this.cartContentResponseListener);
         
 	},
   
@@ -88,32 +102,133 @@ export default {
 			aerisThemeListener: null,
 			aerisMetadataListener: null,
 			cartResponseListener: null,
-			data:  {},
-			downloadEntries : {},
+			cartContentResponseListener: null,
+			years : [],
 			service : null,
 			uuid: null,
 			collectionName: null,
-			isInCart: false,
-			classesButton: "metadata-text-btn"
+			loading: false
+			
 		}
 	},
   
 	methods: {
+		
+		toggleYear: function(item) {
+			for(var i= 0; i < this.years.length; i++) {
+				if (this.years[i].year == item.year) {
+					var url_download_service = this.service;
+						        
+							var obj = {
+								collectionName: JSON.stringify(this.collectionName),
+								url: url_download_service,
+								collectionId: this.uuid,
+					        	id: this.uuid,
+								data: '',
+								fileNumber: item.fileNumber,
+								totalSize: item.totalSize,
+								type: 'yearfilter',
+								elements: [item.year]
+							};
+					if (this.years[i].state == false) {
+							var event = new CustomEvent('addItemToCartEvent', {detail: obj, lang: this.lang});
+							document.dispatchEvent(event);
+					} else {
+						var event = new CustomEvent('deleteItemFromCartEvent', {detail: obj, lang: this.lang});
+							document.dispatchEvent(event);
+					}
+					break;
+				}
+			}
+		},
+		
+		isSelected: function(item) {
+			for(var i= 0; i < this.years.length; i++) {
+				if (this.years[i].year == item.year) {
+					if (this.years[i].state) {
+						return "selected";
+					} 
+					break;
+				}
+			}
+			return ""
+		},
+		
+		selectYear: function(year) {
+			if (this.years) {
+			for(var i= 0; i < this.years.length; i++) {
+				if (this.years[i].year == year) {
+					var aux = this.years[i];
+					aux.state = true
+					this.$set(this.years, i, aux)
+					break;
+				}
+			}
+			
+			}
+		},
+		
+		deselectAll: function() {
+		if (this.years) {
+			for(var i= 0; i < this.years.length; i++) {
+				var aux = this.years[i];
+				aux.state = false
+				this.$set(this.years, i, aux)
+				}
+			}
+		},
+		
+		cartContentResponse: function (e) {
+			this.deselectAll();
+			var cartContent = e.detail.cartContent
+			if (cartContent) {
+				console.log(cartContent)
+				for (var i =0; i <cartContent.length; i++) {
+					var cartItem = cartContent[i]
+					if (cartItem.collectionId== this.uuid) {
+						var years = cartItem.items.elements;
+						for (var j=0; j<years.length;j++) {
+							this.selectYear(years[j])
+						}
+					}
+				}
+			}
+		},
+		
 
 		handleRefresh: function(data) {
-			console.log("eurochamp download - Refreshing");
+			console.log("gmos download - Refreshing");
 			
-			this.uuid = data.detail.uuid;
+			this.uuid = data.detail.id;
 			this.collectionName = data.detail.resourceTitle;
+			
+			var aux = data.detail.links;
+			if (aux) {
+				for(var i= 0; i < aux.length; i++)
+				{
+				    var link = aux[i];
+				    if (link.type =="OPENSEARCH_LINK") {
+				    	this.service = link.url;
+				    	break;
+				    }
+				}
+			}
 			
 			this.visible = false;
 			if (this.service && this.uuid) {
-				var url = null;
-				if (this.service.endsWith('/')) {
-					this.service = this.service.substring(0, this.service.length - 1);
-				}				
-				url = this.service+"/request?collection="+this.uuid;
-				this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
+			    var cached = this.getFromCache(this.getYearCacheKey())
+				if (cached) {
+					this.years = cached;
+				}
+				else {
+					var url = null;
+					if (this.service.endsWith('/')) {
+						this.service = this.service.substring(0, this.service.length - 1);
+					}				
+					url = this.service+"/request?collection="+this.uuid;
+					this.loading = true;
+					this.$http.get(url).then((response)=>{this.handleSuccess(response)},(response)=>{this.handleError(response)});
+				}
 			}
 		},
 		
@@ -132,133 +247,70 @@ export default {
 	  		 if (this.visible) {
 	 			if (this.theme) {
 	 		  		var primary = this.theme.primary;
-	 		  		var darker =  this.colorLuminance(primary, -0.3);
-	 		  		
+
 	 		  		var self = this;
 	 		  		var explicationText = this.$el.querySelector('.explication');
 	 		  		explicationText.style.color = primary;
 	 		  		
 	 		  		var header = this.$el.querySelector("header");
 	 		  		header.style.background = primary;
-	 		  		console.log("XXXX")
-	 				var elems = this.$el.querySelectorAll('main div button');
-	 				var index = 0, length = elems.length;
-	 				
-	 				for ( ; index < length; index++) {
-	 					var buttonAdd = elems[index];
-	 					elems[index].style.color = primary;
-	 					elems[index].style.background = "#FFFFFF";
- 						buttonAdd.style.borderColor = primary;
-	 				
- 						elems[index].addEventListener("mouseout", function() {
-	 						buttonAdd.style.background = "#FFFFFF";
-	 						buttonAdd.style.color = primary;
-	 						buttonAdd.style.borderColor = primary;
-	 					})
-	 					
-	 					if (!this.isInCart) {
-	 						elems[index].addEventListener("mouseover", function() {
-			 						buttonAdd.style.background = primary;
-			 						buttonAdd.style.color = darker;	
-			 						buttonAdd.style.borderColor = darker;
-			 						buttonAdd.style.cursor = "pointer"
-		 					})	
-	 					} else {
-	 						elems[index].addEventListener("mouseover", function() {
-	 							buttonAdd.style.background = "#FFFFFF";
-		 						buttonAdd.style.color = primary;
-		 						buttonAdd.style.borderColor = primary;
-		 						buttonAdd.style.cursor = "default"
-	 					})	
-	 					}
-	 				}	
-	
 	 			}
 	  		 }
 		},
 		      
-	  	colorLuminance: function (hex, lum) {
-	  		//from https://www.sitepoint.com/javascript-generate-lighter-darker-color/
-	  		// validate hex string
-	  		hex = String(hex).replace(/[^0-9a-f]/gi, '');
-	  		if (hex.length < 6) {
-	  			hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
-	  		}
-	  		lum = lum || 0;
-
-	  		// convert to decimal and change luminosity
-	  		var rgb = "#", c, i;
-	  		for (i = 0; i < 3; i++) {
-	  			c = parseInt(hex.substr(i*2,2), 16);
-	  			c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-	  			rgb += ("00"+c).substr(c.length);
-	  		}
-
-	  		return rgb;
-	  	},
-	  	
 		handleSuccess : function(response) {
-			this.downloadEntries = response.body.entries;
-			if (this.downloadEntries.length > 0){
+			var entries = response.body.entries
+			console.log("Aeris - gmos download - Entries : " +entries)
+			this.loading = false;
+			this.years=[];
+			if (entries) {
+				for(var i= 0; i < entries.length; i++)
+				{
+					var aux =window.moment(entries[i].date)
+					var item = {}
+					item.year = aux.year()
+					item.state = false
+					item.totalSize = entries[i].totalSize
+					item.fileNumber = entries[i].fileNumber
+					this.years.push(item)
+				}
 				this.visible = true;
+				
+				this.addToCache(this.getYearCacheKey(), this.years)
 				this.refresh();
-			}
+			}	
+		},
 		
+		getYearCacheKey: function() {
+			return this.uuid+"-years"
+		},
+		
+		getFromCache: function(key) {
+			if (!window.cacheaeris) {
+				return null
+			} 
+			else {
+				return window.cacheaeris[key]
+			}
+		},
+		
+		addToCache: function(key, value) {
+			if (!window.cacheaeris) {
+				window.cacheaeris={}
+			}
+			window.cacheaeris[key]=value;
 		},
 		
 		handleError: function(response) {
-			console.log("Eurochamp download - Error while accessing server:"); 
+			this.loading = false;
+			this.years=[];
+			console.log("Aeris - gmos download - Error while accessing server:"); 
 			var error = response.status;
 			var message = response.statusText;
 			if(!error) message = 'Can\'t connect to the server';
 			console.log('Error ' + error + ': ' + message);
-		},
-		
-		addToCart: function(e) {
-			if (!this.isInCart) {
-				var url_download_service = this.service;
-				var item = e;
-			        
-				var obj = {
-					collectionName: JSON.stringify(this.collectionName),
-					url: url_download_service,
-					collectionId: this.uuid,
-		        	id: this.uuid,
-					data: '',
-					fileNumber: item.fileNumber,
-					fileSize: item.totalSize,
-					type: 'nofilter'
-				};
-				var event = new CustomEvent('addItemToCart', {detail: obj, lang: this.lang});
-		 		document.dispatchEvent(event);
-		 		this.isInCart = true;	
-		 		this.toggleState();
-			}
-		},
-		
-		// fire the event to ask if the collection is already in the cart
-		refresh: function() {
-			var event = new CustomEvent('refreshFromCart', {detail: { collectionId: this.uuid }, lang: this.lang});
-		 	document.dispatchEvent(event);
-		 	this.toggleState();
-		},
-		
-		drawSelected: function(e) {
-			this.isInCart = e.detail ? true : false;
-			// when the event is sent from the cart without being asked (when the cart is already displayed) force the toggleState
-			if (document.getElementById("btnAdd")) {
-				this.toggleState();
-			}
-		},
-		
-		toggleState: function() {
-			if (this.isInCart) {
-				this.classesButton += " button-added-to-cart";
-			} else {
-				this.classesButton = "metadata-text-btn";
-			}
 		}
-	
+		
 	} // methods
 	
 } // default
@@ -269,49 +321,52 @@ export default {
 		display: block;
 	}
 	
+	.gmos-download-host .aeris-year:hover {
+		background: gainsboro;
+	}
+	
+	.gmos-download-host .aeris-year {
+		 display: inline-block;
+		padding: 2px;
+		margin: 2px;
+	}
+	
+	.gmos-download-host .aeris-year.selected {
+		background: rgba(153, 198, 109, 0.5);
+	}
+	
 	.gmos-download-host .explication{
 		font-size: 12px;
 		color: rgb(71, 101, 160);
 	}
 	
-	.gmos-download-host .button-container {
-		display: flex;
-		flex-flow: row wrap;
-		justify-content: space-around;
-		margin: 5px 0;
-		padding: 5px;
+	.gmos-download-host .loadingbar {
+		background: gainsboro;
+		padding: 3px;
 	}
 	
-	.gmos-download-host .button-container button.metadata-text-btn {
-		display: inline-flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		margin: 5px;
-		padding: 0;
-		text-align: center;
-		transition: 0.3s;
-		border-radius: 2px;
+	.gmos-download-host .year-container {
+		margin-top: 5px;
+		margin-bottom: 5px;
 	}
 	
-	.gmos-download-host .downloadButton {
-		display: inline-flex;
-		flex-direction: row;
-	
+	.gmos-download-host .year-value {
+	    display: block;
+	    width: 40px;
+	    text-align: center;
+	    vertical-align: top;
+	    cursor: pointer;
+	    position: relative;
 	}
-	.gmos-download-host .button-container button.metadata-text-btn i {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		min-width: 40px;
-		min-height: 40px;
-	}	
-	.gmos-download-host .button-container button.metadata-text-btn span.textDisplayed {
-		display: inline-block;
-    	vertical-align: middle;
-		height: 100%;
-		padding: 3px 10px;
-		margin: auto 0;
+	
+	.gmos-download-host .year-label {
+		display: block;
+	text-align: center;
+		font-size: 9px;
+	    text-transform: uppercase;
+	    margin-bottom: 2px;
+	    letter-spacing: .7px;
+	    cursor: pointer;
 	}
 	
  </style>

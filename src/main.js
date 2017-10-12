@@ -12,6 +12,7 @@ import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
 import GmosDownload from './gmos-download/gmos-download.vue';
+import GmosCart from './gmos-download/aeris-catalog-cart.vue';
 import GmosMetadata from './gmos-metadata/md-template-gmos-time-series-metadata.vue';
 
 ljs.addAliases({
@@ -51,6 +52,7 @@ ljs.load('dep', function() {
 			
 			registerElement('gmos-download', GmosDownload);
 			registerElement('md-template-gmos-time-series-metadata', GmosMetadata);
+			registerElement('gmos-cart', GmosCart);
 						
 			stopTimer()
 			console.info("Gmos metadata components registration complete")

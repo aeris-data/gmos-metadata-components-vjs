@@ -3,112 +3,59 @@
   <head>
     <meta charset="utf-8">
     <title>Vue Example</title>
-<link rel="stylesheet" href="https://rawgit.com/aeris-data/aeris-metadata-components-vjs/develop/src/style/aeris-metadata-shared-style.css">
-    <script type="text/javascript" component="aeris-data/aeris-commons-components-vjs@latest" src="https://rawgit.com/aeris-data/aeris-component-loader/master/aerisComponentLoader.js" ></script> 
-    <script type="text/javascript" component="aeris-data/aeris-metadata-components-vjs@latest" src="https://rawgit.com/aeris-data/aeris-component-loader/master/aerisComponentLoader.js" ></script>
+
+	<script type="text/javascript" component="aeris-data/aeris-commons-components-vjs@latest" src="https://rawgit.com/aeris-data/aeris-component-loader/master/aerisComponentLoader.js" ></script> 
+	<script type="text/javascript" component="aeris-data/aeris-metadata-components-vjs@latest" src="https://rawgit.com/aeris-data/aeris-component-loader/master/aerisComponentLoader.js" ></script> 
+	<script type="text/javascript" component="aeris-data/aeris-catalogue-components-vjs@latest" src="https://rawgit.com/aeris-data/aeris-component-loader/master/aerisComponentLoader.js" ></script>
+	
 	<style>
 	body {
         font-family: 'Open Sans', sans-serif;
         margin: 0;
         height: 100%;
       }
-	
 	</style>
   </head>
   <body>
-  <link rel="stylesheet" href="https://rawgit.com/aeris-data/aeris-metadata-components-vjs/develop/src/style/aeris-metadata-shared-style.css">
- <style type="text/css">.metadata-container {
-    margin: 0 auto;
-    max-width: 1000px;
-  }
-  
-  .metadata-container .column {
-    width: 50%;
-}
+          <link rel="stylesheet" href="https://rawgit.com/aeris-data/eurochamp-catalogue-components-vjs/master/integration.css">
+	  <link rel="stylesheet" href="https://rawgit.com/aeris-data/aeris-metadata-components-vjs/develop/src/style/aeris-metadata-shared-style.css">
+ 	<style type="text/css">
+	</style>
 
- .small-column {
- 	witdh: 20%;
- 	background-color: #d3d3d3;
- 	padding:20px
- }
- 
- .large-column {
- 	width: 80%;
- 	overflow-y: scroll;
-    padding: 2em;
-    flex: 2;
- }
+  </head>
+  <body>
+<div>
+		
+		<aeris-theme id="theme2" active="true" primary="#19805e" emphasis="#C05A26"></aeris-theme>
+		
+		<gmos-cart cart-token="gmos" style="position:absolute; right:0px; top:5px;z-index:10000"></gmos-cart>
+		<aeris-catalog metadata-service="https://sedoo.aeris-data.fr/catalogue/rest/metadatarecette/" program="GMOS"
+					cart-service="https://sedoo.aeris-data.fr/catalogue/rest/shoppingcart" 
+					download-service="https://sedoo.aeris-data.fr/datacenter-rest/rest/data" 
+					cart-token="gmos"					
+					
+					summary-bar-width="600px" summary-max-length="200" hidemap="true">
+		<span slot="criteria">	
+				<span class="criteriatitle"><h3>Searching criteria</h3></span>
+				<aeris-keyword-search-criteria></aeris-keyword-search-criteria>
+<aeris-level-search-criteria></aeris-level-search-criteria>
+<aeris-platform-search-criteria ></aeris-platform-search-criteria>
 
-.component-container {
-	margin:5px;
-}
-
-.sample-container {
-    display: flex;
-    height: 100vh;
-}
-
-.metadata-container.md-template-collection {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-}
-
-.cart {
-	display: flex;
-	justify-content: flex-end;
+		</span>
+		<span slot="buttons">
+			<aeris-catalogue-search-button></aeris-catalogue-search-button>
+			<aeris-catalogue-reset-button></aeris-catalogue-reset-button>
+			<aeris-catalogue-maximize-button></aeris-catalogue-maximize-button>
+			<aeris-catalogue-help-button></aeris-catalogue-help-button>
+		</span>
+	</aeris-catalog>
+	<span slot="help">
+		<aeris-catalog-help-content helpcookie="help-popup"></aeris-catalog-help-content>
+	</span>
+		
+	</div>
 	
-}
-</style>
-
-<div class="sample-container">
-<div class="small-column">
-<h2>Langage</h2>
-<form action="">
-  <input type="radio" name="lang" value="en"> English   <input type="radio" name="lang" value="female"> French 
-</form>
-<h2>Dataset</h2>
-<form action="">
-  <input type="radio" name="dataset" checked="true" value="4df14cdf-7ec1-e8c4-bf2b-4c465a7a54a1" onclick="document.querySelector('aeris-metadata').setAttribute('identifier', value)"> Chambre</input>
-  <input type="radio" name="dataset" value="" onclick="document.querySelector('aeris-metadata').setAttribute('identifier', value)"> Spectre</input>
-<!--   <input type="radio" name="dataset" value="2d6a46ed-eab7-e811-bc1c-9c1a788a46c6" onclick="document.querySelector('aeris-metadata').setAttribute('identifier', value)"> Mass Spectra</input>   -->
-  
-</form>
-<h2>Theme</h2>
-<form action="">
-  <input type="radio" name="theme" checked="false" onclick="document.querySelector('#theme2').setAttribute('active', 'false');document.querySelector('#theme1').setAttribute('active', 'true');"> Blue <input checked="true" type="radio" name="theme" onclick="document.querySelector('#theme1').setAttribute('active', 'false');document.querySelector('#theme2').setAttribute('active', 'true');"> Red 
-</form>
-</div>
-
-<div class="large-column">
-<aeris-catalog download-service="http://localhost:8080/datacenter-rest/rest/data">
-	<aeris-theme id="theme1" active="false" primary="#4765a0" emphasis="#f39c12"></aeris-theme>
-	<aeris-theme id="theme2" active="true" primary="#F1684E" emphasis="#1B1B1B"></aeris-theme>
-	<aeris-metadata identifier="4df14cdf-7ec1-e8c4-bf2b-4c465a7a54a1" lang="fr" service="http://localhost:9080/catalogue/rest/metadatarecette/id/" list-cart-service="http://localhost:8080/datacenter-rest/rest/data/request">
-		<div class="metadata-container md-template-collection">
-			<div class="column style-scope md-template-collection">
-				<eurochamp-molecule></eurochamp-molecule>
-				<eurochamp-chamber-experiment></eurochamp-chamber-experiment>
-				<eurochamp-chamber-information></eurochamp-chamber-information>
-			</div>
-			<div class="column style-scope md-template-collection">
-				<aeris-metadata-contacts></aeris-metadata-contacts> 
-				<eurochamp-download></eurochamp-download>
-				<aeris-metadata-information></aeris-metadata-information>
-			</div>
-<!-- 			<div class="column style-scope md-template-collection"> -->
-<!-- 			 <aeris-metadata-doi></aeris-metadata-doi><aeris-metadata-quicklook-gallery></aeris-metadata-quicklook-gallery><aeris-metadata-disponibility-calendar calendar-type="quarter"></aeris-metadata-disponibility-calendar> <aeris-metadata-platforms></aeris-metadata-platforms> <aeris-metadata-formats></aeris-metadata-formats> <aeris-metadata-parameters></aeris-metadata-parameters> <aeris-metadata-publications></aeris-metadata-publications> <aeris-metadata-quicklook-gallery></aeris-metadata-quicklook-gallery></div> -->
-<!-- 			</div> -->
-
-<!-- 			<div class="column style-scope md-template-collection cart"> -->
-<!-- 				<aeris-catalog-cart carttoken="eurochamp" service="http://localhost:9080/catalogue/rest/shoppingcart"></aeris-catalog-cart> -->
-<!-- 			</div> -->
-		</div>
-	</aeris-metadata>
-</aeris-catalog>
-</div>
-
-<script src="dist/build.js"></script>
+	<script src="dist/build.js"></script>
 
   </body>
 </html>
