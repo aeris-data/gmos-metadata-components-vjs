@@ -16,7 +16,7 @@
 <header class="box-heading" v-on:click="deployed = !deployed">
   <div class="box-title">
       <i  :class="headerIconClass" id="icon" v-show="headerIconClass"></i>
-    <h4 no-label-float><aeris-international-field :lang="lang" :value="title" ></aeris-international-field></h4>
+    <h4 no-label-float style="color:white"><aeris-international-field :lang="lang" :value="title" ></aeris-international-field></h4>
   </div>
   <div class="box-heading-buttons">
     <i class="chevron" :class="openIconClass"></i>
