@@ -2,15 +2,17 @@
 {
   "en": {
   	"download": "Download",
-  	"explicationText": "To download the data files, add them to the cart by clicking here.",
+  	"explicationText": "To download the data files, add them to the cart by clicking on each year.",
   	"year": "year",
-  	"loading": "Loading..."
+  	"loading": "Loading...",
+    "l0instructions": "Only level-2 files can be downloaded directly. If you are interested in getting level-0 data, please contact the investigators" 
   },
   "fr": {
   	"download": "Téléchargement",
-  	"explicationText": "Pour télécharger les fichiers de donn�es, ajoutez-les au panier en cliquant ici.",
+  	"explicationText": "Pour télécharger les fichiers de données, ajoutez-les au panier en cliquant sur les différentes années.",
   	"year": "ann.",
-  	"loading": "Chargement..."
+  	"loading": "Chargement...",
+  	"l0instructions": "Seuls les fichiers de niveau 2 peuvent être téléchargés directement. Si vous êtes intéressés par les fichier de niveau 0, contactez les responsables."
   }
 }
 </i18n>
@@ -23,7 +25,10 @@
         <div class="aeris-icon-group"></div>
       </header>
       
-      <main>   
+      <main v-if="isL0" style="text-align:justify">
+      <span class="explication">{{$t('l0instructions')}}</span>
+      </main>
+      <main v-else style="text-align:justify">   
       	
       	  <span class="explication">{{$t('explicationText')}}</span>
       	<div v-if="loading" class="loadingbar">
@@ -107,7 +112,8 @@ export default {
 			service : null,
 			uuid: null,
 			collectionName: null,
-			loading: false
+			loading: false,
+			isL0 : false
 			
 		}
 	},
@@ -196,13 +202,22 @@ export default {
 		},
 		
 
-		handleRefresh: function(data) {
+		handleRefresh: function(e) {
 			console.log("gmos download - Refreshing");
-			
-			this.uuid = data.detail.id;
-			this.collectionName = data.detail.resourceTitle;
-			
-			var aux = data.detail.links;
+			this.visible = false;
+			this.uuid = e.detail.id;
+			this.collectionName = e.detail.resourceTitle;
+			if (!e.detail.dataLevel) {
+				return
+			}
+			if (e.detail.dataLevel.toLowerCase()=='l0') {
+				this.isL0 = true
+				this.visible = true;
+				return
+			} else {
+				this.isL0 = false;
+			}
+			var aux = e.detail.links;
 			if (aux) {
 				for(var i= 0; i < aux.length; i++)
 				{
@@ -214,7 +229,7 @@ export default {
 				}
 			}
 			
-			this.visible = false;
+			
 			if (this.service && this.uuid) {
 			    var cached = this.getFromCache(this.getYearCacheKey())
 				if (cached) {
@@ -338,6 +353,7 @@ export default {
 	.gmos-download-host .explication{
 		font-size: 12px;
 		color: rgb(71, 101, 160);
+		text-align: justify
 	}
 	
 	.gmos-download-host .loadingbar {

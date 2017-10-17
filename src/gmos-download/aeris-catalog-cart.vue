@@ -261,7 +261,7 @@ export default {
         				collection.items.elements.push(item.elements[i]);
         			}
         			collection.fileNumber += item.fileNumber;
-        			collection.fileSize += item.fileSize;
+        			collection.fileSize += item.totalSize;
         		}
         		collection.filterDescription=this.filterDescription(collection);
         		this.$set(this.cartContent, j, collection)
@@ -277,7 +277,7 @@ export default {
             collectionName: item.collectionName,
             url: item.url,
             fileNumber: item.fileNumber,
-            fileSize: item.fileSize,
+            fileSize: item.totalSize,
             items: {
               type: item.type,
               elements: item.elements
@@ -320,7 +320,7 @@ export default {
 	        			}
 	        			collection.filterDescription=this.filterDescription(collection);
 	        			collection.fileNumber -= item.fileNumber;
-	        			collection.fileSize -= item.fileSize;
+	        			collection.fileSize -= item.totalSize;
 	        		}
 	        	}
 	        	if (collection.items.elements.length>0) {
@@ -358,8 +358,17 @@ export default {
 		this.downloadScript = response.data;
 	},
 	
-	handleError: function(response) {
+	handleErrorScript: function(response) {
 		console.log("Cart - Error while accessing server:"); 
+		var error = response.status;
+		var message = response.statusText;
+		if(!error) message = 'Can\'t connect to the server';
+		console.log('Error ' + error + ': ' + message);
+	},
+	
+	handleErrorDownload: function(response) {
+		console.log("Cart - Error while accessing server:");
+		document.dispatchEvent(new CustomEvent('aerisLongActionStopEvent', { 'detail': {message: this.$t('downloadingFiles')}}))
 		var error = response.status;
 		var message = response.statusText;
 		if(!error) message = 'Can\'t connect to the server';
@@ -383,7 +392,7 @@ export default {
 		this.togglePopup;
 		var url = this.cartService + '/toscript';
 		this.$http.post(url, JSON.stringify(this.cartContent))
-					.then((response)=>{this.handleSuccessScript(response)},(response)=>{this.handleError(response)});
+					.then((response)=>{this.handleSuccessScript(response)},(response)=>{this.handleErrorScript(response)});
 	},
 	
 	downloadFile: function() {
@@ -391,7 +400,7 @@ export default {
 		document.dispatchEvent(new CustomEvent('aerisLongActionStartEvent', { 'detail': {message: this.$t('downloadingFiles')}}))
 		var url = this.cartService + '/download';
 		this.$http.post(url,  JSON.stringify(this.cartContent), {headers: {'Content-Type': 'application/zip', 'Accept': 'application/zip'}, responseType: 'blob'})
-					.then((response)=>{this.handleSuccessDownload(response)},(response)=>{this.handleError(response)});
+					.then((response)=>{this.handleSuccessDownload(response)},(response)=>{this.handleErrorDownload(response)});
 	},
     
 	handleSuccessScript: function(response) {
@@ -403,7 +412,7 @@ export default {
         var randomId = Math.floor((1 + Math.random()) * 0x10000)
                       .toString(16)
                       .substring(1);
-        var fileName = "eurochamp-"+ randomId + ".zip";
+        var fileName = "download-"+ randomId + ".zip";
         
         saveAs(blob, fileName);
          /* Hide notification */
@@ -438,7 +447,6 @@ export default {
 	},
 	
 	closePopup: function() {
-		this.removeAll();
 		this.isPopupOpen = !this.isPopupOpen;
 	},
 	

@@ -14,6 +14,7 @@ Vue.use(VueResource);
 import GmosDownload from './gmos-download/gmos-download.vue';
 import GmosCart from './gmos-download/aeris-catalog-cart.vue';
 import GmosMetadata from './gmos-metadata/md-template-gmos-time-series-metadata.vue';
+import GmosTimeSeriesMetadataSummary  from './gmos-download/gmos-time-series-metadata-summary.vue';
 
 ljs.addAliases({
 	dep: ['https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
@@ -51,6 +52,7 @@ ljs.load('dep', function() {
 			console.info("Registred elements at this time: "+window.registredAerisElements)
 			
 			registerElement('gmos-download', GmosDownload);
+			registerElement('gmos-time-series-metadata-summary', GmosTimeSeriesMetadataSummary);
 			registerElement('md-template-gmos-time-series-metadata', GmosMetadata);
 			registerElement('gmos-cart', GmosCart);
 						
