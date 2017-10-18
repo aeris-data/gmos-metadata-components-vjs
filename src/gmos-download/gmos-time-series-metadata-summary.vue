@@ -203,13 +203,7 @@ export default {
   		var self = this.$el.querySelector("button");
   		var primary = this.theme.primary;
   		this.$el.querySelector("button").style.background=primary;
-  		var darker =  this.$colorLuminance(primary, -0.3)
-  		self.addEventListener("mouseover", function() {
-  			self.style.background=darker;
-  		})
-  		self.addEventListener("mouseout", function() {
-  			self.style.background=primary;
-  		})
+  		
   	}
   	},
   	
