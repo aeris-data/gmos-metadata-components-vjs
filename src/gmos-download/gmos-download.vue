@@ -292,7 +292,6 @@ export default {
 				this.visible = true;
 				
 				this.addToCache(this.getYearCacheKey(), this.years)
-				this.refresh();
 			}	
 		},
 		
