@@ -10,6 +10,7 @@
 </div>
 <div class="column">
   <gmos-download></gmos-download>
+  <aeris-metadata-datapolicy></aeris-metadata-datapolicy>
   <aeris-metadata-plateforms></aeris-metadata-plateforms>
   <aeris-metadata-formats></aeris-metadata-formats>
   <aeris-metadata-parameters></aeris-metadata-parameters>
