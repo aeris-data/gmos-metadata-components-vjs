@@ -234,6 +234,8 @@ export default {
 			    var cached = this.getFromCache(this.getYearCacheKey())
 				if (cached) {
 					this.years = cached;
+					var event = new CustomEvent('cartContentRequest',  {});
+			         document.dispatchEvent(event);
 				}
 				else {
 					var url = null;
@@ -292,6 +294,8 @@ export default {
 				this.visible = true;
 				
 				this.addToCache(this.getYearCacheKey(), this.years)
+				var event = new CustomEvent('cartContentRequest',  {});
+		         document.dispatchEvent(event);
 			}	
 		},
 		
