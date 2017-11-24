@@ -11,6 +11,7 @@ Vue.use(VueI18n);
 import VueResource from 'vue-resource';
 Vue.use(VueResource);
 
+import GmosMetadataLayout from './gmos-metadata-layouts/gmos-metadata-layout.vue';
 import GmosDownload from './gmos-download/gmos-download.vue';
 import GmosCart from './gmos-download/aeris-catalog-cart.vue';
 import GmosMetadata from './gmos-metadata/md-template-gmos-time-series-metadata.vue';
@@ -18,22 +19,22 @@ import GmosTimeSeriesMetadataSummary  from './gmos-download/gmos-time-series-met
 
 ljs.addAliases({
 	dep: ['https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
-		'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js', 
+		'https://cdnjs.cloudflare.com/ajax/libs/document-register-element/1.4.1/document-register-element.js',
 		'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment-with-locales.min.js']
 })
 
 ljs.load('dep', function() {
-	
+
 	if (!window.registredAerisElements) {
 		window.registredAerisElements = [];
 	}
-	
+
 	var timer;
-	
+
 	function stopTimer() {
 	    clearInterval(timer);
 	}
-	
+
 	function registerElement(name, component) {
         if (!window.registredAerisElements) {
             window.registredAerisElements = [];
@@ -43,28 +44,29 @@ ljs.load('dep', function() {
             window.registredAerisElements.push(name)
         }
     }
-	
+
 	function register() {
 		console.info("trying to register gmos metadata components")
 		if (window.registredAerisElements.indexOf("aeris-metadata-components-vjs") > -1) {
-			
+
 			console.info("Start registration of gmos metadata components")
 			console.info("Registred elements at this time: "+window.registredAerisElements)
-			
+
+			Vue.component('gmos-metadata-layout', GmosMetadataLayout);
+			registerElement('gmos-metadata-layout', GmosMetadataLayout);
 			registerElement('gmos-download', GmosDownload);
 			registerElement('gmos-time-series-metadata-summary', GmosTimeSeriesMetadataSummary);
 			registerElement('md-template-gmos-time-series-metadata', GmosMetadata);
 			registerElement('gmos-cart', GmosCart);
-						
+
 			stopTimer()
 			console.info("Gmos metadata components registration complete")
-			
+
 		}
 		else {
 			console.info("aeris-metadata-components-vjs not available yet...")
 		}
 	}
-	
+
 	timer = setInterval(function(){register()}, 1000);
 })
-
