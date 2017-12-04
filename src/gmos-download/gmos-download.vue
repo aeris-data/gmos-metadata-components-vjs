@@ -264,13 +264,13 @@ export default {
 	  		 if (this.visible) {
 	 			if (this.theme) {
 	 		  		var primary = this.theme.primary;
+	 		  		var emphasis = this.theme.emphasis;
 
-	 		  		var self = this;
-	 		  		var explicationText = this.$el.querySelector('.explication');
-	 		  		explicationText.style.color = primary;
-	 		  		
 	 		  		var header = this.$el.querySelector("header");
 	 		  		header.style.background = primary;
+
+	 		  		var bloc = this.$el.querySelector("[data-gmos-metadata-layout]");
+	 		  		bloc.style.backgroundColor = emphasis;
 	 			}
 	  		 }
 		},
