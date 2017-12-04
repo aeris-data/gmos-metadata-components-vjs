@@ -13,7 +13,6 @@ Vue.use(VueResource);
 
 import GmosMetadataLayout from './gmos-metadata-layouts/gmos-metadata-layout.vue';
 import GmosDownload from './gmos-download/gmos-download.vue';
-import GmosCart from './gmos-download/aeris-catalog-cart.vue';
 import GmosMetadata from './gmos-metadata/md-template-gmos-time-series-metadata.vue';
 import GmosTimeSeriesMetadataSummary  from './gmos-download/gmos-time-series-metadata-summary.vue';
 
@@ -57,7 +56,6 @@ ljs.load('dep', function() {
 			registerElement('gmos-download', GmosDownload);
 			registerElement('gmos-time-series-metadata-summary', GmosTimeSeriesMetadataSummary);
 			registerElement('md-template-gmos-time-series-metadata', GmosMetadata);
-			registerElement('gmos-cart', GmosCart);
 
 			stopTimer()
 			console.info("Gmos metadata components registration complete")

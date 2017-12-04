@@ -65,6 +65,9 @@ export default {
       if (this.$el && this.$el.querySelector("header h3 i")) {
         this.$el.querySelector("header h3 i").style.color = this.theme.primary;
       }
+      if (this.$el) {
+    	  this.$el.style.backgroundColor = this.theme.emphasis;
+      }
     }
 
   }
