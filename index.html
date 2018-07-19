@@ -17,56 +17,62 @@
 	</style>
   </head>
   <body>
-  <link rel="stylesheet" href="https://rawgit.com/aeris-data/aeris-metadata-components-vjs/develop/src/style/aeris-metadata-shared-style.css">
- <style type="text/css">.metadata-container {
-    margin: 0 auto;
-    max-width: 1000px;
-  }
-  
-  .metadata-container .column {
-    width: 50%;
-}
-
- .small-column {
- 	witdh: 20%;
- 	background-color: #d3d3d3;
- 	padding:20px
- }
- 
- .large-column {
- 	width: 80%;
- 	overflow-y: scroll;
-    padding: 2em;
-    flex: 2;
- }
-
-.sample-container {
-    display: flex;
-    height: 100vh;
-}
-
-.metadata-container.md-template-collection {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
-}
-</style>
-
-<div class="sample-container">
-<div class="small-column">
-<button onclick="document.querySelector('aeris-metadata').setAttribute('identifier', '');document.querySelector('aeris-metadata').setAttribute('identifier', 'bcb74d91-d6ea-4f83-a897-f98f8edc044c')">Load...</button>
-<button onclick="document.dispatchEvent(new CustomEvent('aerisTheme', { detail: {primary: '#20246b', emphasis: '#E0C06A'}}));">Theme</button>
-
-</div>
-<div class="large-column">
-<aeris-theme primary="#ff0000" emphasis="#00ff00" ></aeris-theme>
-<aeris-catalog-cart cart-service="https://sedoo.aeris-data.fr/catalogue/rest/shoppingcart" cart-token="gewex" ></aeris-catalog-cart>
-<aeris-metadata identifier="" lang="fr" service="https://sedoo.aeris-data.fr/catalogue/rest/metadatarecette/id/">
-</aeris-metadata>
-<md-template-gmos-time-series-metadata></md-template-gmos-time-series-metadata>
-</div>
-</div>
-<script src="dist/build.js"></script>
-
-  </body>
+    <style>
+      body {
+        font-family: 'Open Sans', sans-serif;
+        margin: 0;
+        height: 100%;
+      }
+    
+      [data-aeris-catalog] ul {
+        margin: 0;
+      }
+    
+      [data-aeris-catalog] h2,
+      [data-aeris-catalog] h3 {
+        border: none;
+      }
+    
+      [data-aeris-catalog-box] [data-aeris-spatial-search-criteria-content] i {
+         color: #333;
+      }
+    </style>
+    
+      <div>
+      
+        <aeris-theme id="theme2" active="true" primary="#f39846" emphasis="#f39846"></aeris-theme>
+      <aeris-language lang="fr" active="true"></aeris-language>
+    
+        <aeris-language lang="fr" active="true"></aeris-language>
+        <aeris-orcid orcid="0000-0002-2275-0537"></aeris-orcid>
+        <aeris-catalog metadata-service="http://localhost:9080/catalogue/rest/metadatarecette/""
+          criteria-header-icon-color="grey"
+          criteria-background-color="#F5F5F5"
+          criteria-content-primary-color="grey"
+          summary-bar-width="400px"
+          summary-max-length="200"
+              cart-token="aeris">
+          <div slot="criteria">
+            <aeris-keyword-search-criteria></aeris-keyword-search-criteria>
+            <aeris-instrument-search-criteria></aeris-instrument-search-criteria>
+            <aeris-temporal-search-criteria></aeris-temporal-search-criteria>
+            <aeris-spatial-search-criteria></aeris-spatial-search-criteria>
+            <aeris-platform-search-criteria></aeris-platform-search-criteria>
+            <aeris-level-search-criteria></aeris-level-search-criteria>
+            <aeris-collection-search-criteria exclusion="CAPITOUL,ESCOMPTE,PASSY,CARBO" downloadable="EUROCHAMP,GMOS,ACTRIS-FR,GEWEX"></aeris-collection-search-criteria>
+            <aeris-collection-search-criteria headertitle="campaigns" headericonclass="fa fa-map-o" inclusion="CAPITOUL,ESCOMPTE,PASSY,CARBO" downloadable="ESCOMPTE,CARBO"></aeris-collection-search-criteria>
+          </div>
+          <div slot="buttons-criteria">
+            <aeris-catalogue-help-button></aeris-catalogue-help-button>
+            <aeris-catalogue-maximize-button></aeris-catalogue-maximize-button>
+            <aeris-catalogue-reset-button></aeris-catalogue-reset-button>
+            <aeris-catalogue-search-button></aeris-catalogue-search-button>
+          </div>
+          <div slot="buttons-map">
+            <aeris-catalogue-edit-button></aeris-catalogue-edit-button>
+          </div>
+        </aeris-catalog>
+        <aeris-catalog-help-content helpcookie="aeris-help-popup"></aeris-catalog-help-content>
+    
+      </div>
 </html>

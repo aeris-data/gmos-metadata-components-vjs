@@ -6,7 +6,7 @@
   <aeris-metadata-contacts></aeris-metadata-contacts>
   <gmos-download></gmos-download>
   <aeris-metadata-datapolicy></aeris-metadata-datapolicy>
-  <aeris-metadata-plateforms></aeris-metadata-plateforms>
+  <aeris-metadata-platforms></aeris-metadata-platforms>
   <aeris-metadata-formats></aeris-metadata-formats>
   <aeris-metadata-parameters></aeris-metadata-parameters>
   <aeris-metadata-publications></aeris-metadata-publications>
